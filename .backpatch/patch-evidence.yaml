@@ -1,0 +1,21 @@
+schema: osera-patch-evidence/0.1.0
+producer: moderne
+release: 4.0.56.Final-backpatch-00001
+baseline: v4.0.56.Final+backpatch.baseline
+fixes:
+  - cve: CVE-2019-16869
+    upstream_fix_url: https://github.com/netty/netty/commit/39cafcb05c99f2aa9fce7e6597664c9ed6a63a95
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2019-16869
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-netty/commit/fe6387d
+    basis: adapted
+    artifacts:
+      - io.netty:netty-codec-http
+    note: New in this release; ported onto 4.0.56.Final; fixed at 4.0.56.Final-backpatch-00001 (backpatch-netty@fe6387d).
+tests:
+  commit: fe6387d495d7280b50cd32d91fc5d9c34bd46581
+  command: mvn -B -T1 -pl codec-http -Denforcer.skip=true -Dtcnative.classifier=osx-x86_64 -Dmaven.test.failure.ignore=true clean test
+  runtime: openjdk version 1.8.0_382, Apache Maven 3.9.16
+  report: netty-codec-http-4.0.56.Final-backpatch-00001-tests.zip
+  report_sha256: 4daa6ceacf152eb52d43e7f2a0c1e6d1fce60576637e4df833e29ae0c918c4c2
+  result: pass
+  note: 460 tests at the patch commit, 0 of them skipped by the suite, 0 failed, 0 errors.
