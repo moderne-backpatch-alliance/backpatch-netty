@@ -262,4 +262,18 @@ public class HttpRequestDecoderTest {
         assertTrue(request.getDecoderResult().cause() instanceof TooLongFrameException);
         assertFalse(channel.finish());
     }
+
+    @Test
+    public void testWhitespace() {
+        EmbeddedChannel channel = new EmbeddedChannel(new HttpRequestDecoder());
+        String requestStr = "GET /some/path HTTP/1.1\r\n" +
+                "Transfer-Encoding : chunked\r\n" +
+                "Host: netty.io\n\r\n";
+
+        assertTrue(channel.writeInbound(Unpooled.copiedBuffer(requestStr, CharsetUtil.US_ASCII)));
+        HttpRequest request = (HttpRequest) channel.readInbound();
+        assertTrue(request.getDecoderResult().isFailure());
+        assertTrue(request.getDecoderResult().cause() instanceof IllegalArgumentException);
+        assertFalse(channel.finish());
+    }
 }

@@ -647,4 +647,19 @@ public class HttpResponseDecoderTest {
         assertThat(message.getDecoderResult().cause(), instanceOf(PrematureChannelClosureException.class));
         assertNull(channel.readInbound());
     }
+
+    @Test
+    public void testWhitespace() {
+        EmbeddedChannel channel = new EmbeddedChannel(new HttpResponseDecoder());
+        String requestStr = "HTTP/1.1 200 OK\r\n" +
+                "Transfer-Encoding : chunked\r\n" +
+                "Host: netty.io\n\r\n";
+
+        assertTrue(channel.writeInbound(Unpooled.copiedBuffer(requestStr, CharsetUtil.US_ASCII)));
+        HttpResponse response = (HttpResponse) channel.readInbound();
+        assertFalse(response.getDecoderResult().isFailure());
+        assertEquals(HttpHeaders.Values.CHUNKED, response.headers().get(Names.TRANSFER_ENCODING));
+        assertEquals("netty.io", response.headers().get(Names.HOST));
+        assertFalse(channel.finish());
+    }
 }
